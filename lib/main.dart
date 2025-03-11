@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'screw counter',
+      title: 'Screw Counter',
       theme: ThemeData(
         fontFamily: 'LBC',
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
