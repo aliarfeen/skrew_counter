@@ -5,13 +5,15 @@ import 'package:skrew_counter/data/consts/constants.dart';
 import 'package:skrew_counter/ui/widgets/app_text.dart';
 
 class RankContainer extends StatelessWidget {
-  int rank;
-  String playerName;
-  int score;
-  RankContainer({
+  final int rank;
+  final String playerName;
+  final int score;
+  final TextEditingController scoreController;
+  const RankContainer({
     Key? key,
     required this.rank,
     required this.playerName,
+    required this.scoreController,
     required this.score,
   }) : super(key: key);
 
@@ -25,37 +27,54 @@ class RankContainer extends StatelessWidget {
           textDirection: TextDirection.rtl,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Icon(
-              Icons.arrow_upward,
-              color: AppColors.appSecColor,
+            Row(
+              textDirection: TextDirection.rtl,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                AppText(
+                  context: context,
+                  text: rank.toString(),
+                  color: AppColors.appSecColor,
+                  fontsize: 20,
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Text(
+                  playerName,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    fontFamily: 'LBC',
+                    color: AppColors.appSecColor,
+                  ),
+                )
+              ],
             ),
-            AppText(
-              text: rank.toString(),
-              color: AppColors.appSecColor,
-              fontsize: 20,
+            Row(
+              textDirection: TextDirection.rtl,
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .25,
+                  child: TextField(
+                      style: TextStyle(color: AppColors.appSecColor),
+                      keyboardType: TextInputType.number,
+                      controller: scoreController,
+                      decoration: InputDecoration(
+                          hintText: 'score',
+                          hintStyle: TextStyle(color: AppColors.appSecColor))),
+                ),
+                const SizedBox(
+                  width: 20,
+                ),
+                AppText(
+                  context: context,
+                  text: score.toString(),
+                  color: AppColors.appSecColor,
+                  fontsize: 20,
+                )
+              ],
             ),
-            SizedBox(
-              width: 80,
-              height: 50,
-              child: AppText(
-                text: playerName,
-                color: AppColors.appSecColor,
-                fontsize: 18,
-              ),
-            ),
-            Icon(
-              Icons.add_circle,
-              color: AppColors.appSecColor,
-            ),
-            Icon(
-              Icons.incomplete_circle_rounded,
-              color: AppColors.appSecColor,
-            ),
-            AppText(
-              text: score.toString(),
-              color: AppColors.appSecColor,
-              fontsize: 20,
-            )
           ],
         ));
   }

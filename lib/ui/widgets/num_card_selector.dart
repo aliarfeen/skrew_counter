@@ -45,6 +45,7 @@ class _ShadowContainerState extends State<ShadowContainer> {
             ],
           ),
           child: AppText(
+            context: context,
             text: widget.number.toString(),
             fontsize: 60,
             color: Color(0xffD99441),

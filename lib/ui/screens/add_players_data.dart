@@ -1,16 +1,13 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-
 import 'package:skrew_counter/data/consts/constants.dart';
-import 'package:skrew_counter/ui/screens/add_players.dart';
-import 'package:skrew_counter/ui/screens/screw_counter_screen.dart';
-import 'package:skrew_counter/ui/widgets/app_main_button.dart';
+import 'package:skrew_counter/providers/players_provider.dart';
+import 'package:skrew_counter/ui/screens/set_players_number.dart';
+import 'package:skrew_counter/ui/screens/scoreboard_screen.dart';
 import 'package:skrew_counter/ui/widgets/app_text.dart';
 import 'package:skrew_counter/ui/widgets/app_text_area.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AddPlayers extends StatefulWidget {
+class AddPlayers extends ConsumerStatefulWidget {
   final int number;
 
   AddPlayers({
@@ -19,15 +16,18 @@ class AddPlayers extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<AddPlayers> createState() => _AddPlayersState();
+  ConsumerState<AddPlayers> createState() => _AddPlayersState();
 }
 
-class _AddPlayersState extends State<AddPlayers> {
+class _AddPlayersState extends ConsumerState<AddPlayers> {
+  late PlayersNotifier playersNotifier;
   late List<TextEditingController> _controllers;
 
   @override
   void initState() {
     super.initState();
+
+    playersNotifier = ref.read(playersProvider.notifier);
     _controllers = List.generate(widget.number, (_) => TextEditingController());
   }
 
@@ -36,8 +36,8 @@ class _AddPlayersState extends State<AddPlayers> {
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width * 1,
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
@@ -66,7 +66,7 @@ class _AddPlayersState extends State<AddPlayers> {
                           MaterialPageRoute(
                               builder: (context) => PlayersNumber()));
                     },
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.arrow_back_ios_rounded,
                       size: 30,
                     )),
@@ -77,75 +77,58 @@ class _AddPlayersState extends State<AddPlayers> {
                 IconButton(
                     color: AppColors.appSecColor,
                     onPressed: () {},
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.help,
                       size: 30,
                     )),
               ],
             ),
             AppText(
+              context: context,
               text: 'أدخل أسماء اللاعبين',
               fontsize: 30,
-              color: Color(0xffD99441),
+              color: AppColors.appSecColor,
             ),
-            SizedBox(
+            const SizedBox(
               height: 40,
             ),
             Column(children: [
               ..._controllers
-                  .map((controller) => AppTextField(controller: controller))
+                  .map((controller) => AppTextField(
+                        controller: controller,
+                        hintText:
+                            "اسم اللاعب ${_controllers.indexOf(controller) + 1}",
+                      ))
                   .toList(),
             ]),
-            // AppTextField(controller: controller),
-            // AppTextField(controller: controller),
-            // AppTextField(controller: controller),
-            // AppTextField(controller: controller),
-            // AppTextField(controller: controller),
-            SizedBox(
+            const SizedBox(
               height: 40,
             ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     List<String> data =
-            //         _controllers.map((controller) => controller.text).toList();
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) =>
-            //             ScrewCounterScreen(number: widget.number, data: data),
-            //       ),
-            //     );
-            //   },
-            //   child: Text('Submit'),
-            // ),
-            Material(
-              elevation: 3,
-              borderOnForeground: false,
-              shadowColor: Color(0xffD99441),
-              borderRadius: BorderRadius.circular(32),
-              child: MaterialButton(
-                  color: Color(0xffD99441),
-                  onPressed: () {
-                    List<String> data = _controllers
-                        .map((controller) => controller.text)
-                        .toList();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ScrewCounterScreen(
-                            number: widget.number, data: data),
-                      ),
-                    );
-                  },
-                  height: 60,
-                  minWidth: MediaQuery.of(context).size.width,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(32)),
-                  child: AppText(
-                    text: 'يلا بينا',
-                    color: AppColors.appMainColor,
-                    fontsize: 40,
-                  )),
+            MaterialButton(
+              color: AppColors.appSecColor,
+              onPressed: () {
+                List<String> data =
+                    _controllers.map((controller) => controller.text).toList();
+                playersNotifier.addPlayer(data);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ScrewCounterScreen(
+                      number: widget.number,
+                    ),
+                  ),
+                );
+              },
+              height: 60,
+              minWidth: MediaQuery.of(context).size.width,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(32)),
+              child: AppText(
+                context: context,
+                text: 'يلا بينا',
+                color: AppColors.appMainColor,
+                fontsize: 40,
+              ),
             ),
           ],
         ),

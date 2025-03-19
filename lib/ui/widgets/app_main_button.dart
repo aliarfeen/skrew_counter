@@ -26,7 +26,7 @@ class AppMainButton extends StatelessWidget {
         child: MaterialButton(
             color: Color(0xffD99441),
             onPressed: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => screen),
               );
@@ -36,6 +36,7 @@ class AppMainButton extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
             child: AppText(
+              context: context,
               text: text,
               color: AppColors.appMainColor,
               fontsize: 40,

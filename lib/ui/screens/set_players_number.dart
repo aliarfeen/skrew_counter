@@ -1,18 +1,20 @@
-import 'dart:math';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:flutter/material.dart';
 import 'package:skrew_counter/data/consts/constants.dart';
+import 'package:skrew_counter/providers/players_provider.dart';
 import 'package:skrew_counter/ui/screens/add_players_data.dart';
 import 'package:skrew_counter/ui/widgets/app_main_button.dart';
 import 'package:skrew_counter/ui/widgets/app_text.dart';
-import 'package:skrew_counter/ui/widgets/num_card_selector.dart';
 
-class PlayersNumber extends StatefulWidget {
+class PlayersNumber extends ConsumerStatefulWidget {
+  const PlayersNumber({Key? key}) : super(key: key);
+
   @override
-  State<PlayersNumber> createState() => _PlayersNumberState();
+  ConsumerState<PlayersNumber> createState() => _PlayersNumberState();
 }
 
-class _PlayersNumberState extends State<PlayersNumber> {
+class _PlayersNumberState extends ConsumerState<PlayersNumber> {
   int _currentHorizontalIntValue = 4;
 
   @override
@@ -20,8 +22,8 @@ class _PlayersNumberState extends State<PlayersNumber> {
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width * 1,
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topRight,
             end: Alignment.bottomLeft,
@@ -44,6 +46,7 @@ class _PlayersNumberState extends State<PlayersNumber> {
               height: 80,
             ),
             AppText(
+              context: context,
               text: 'عدد اللاعبين ؟',
               fontsize: 40,
               color: Color(0xffD99441),
@@ -67,8 +70,10 @@ class _PlayersNumberState extends State<PlayersNumber> {
                   fontWeight: FontWeight.bold,
                   fontFamily: 'LBC', // font weight
                   color: const Color.fromARGB(130, 217, 149, 65)),
-              onChanged: (value) =>
-                  setState(() => _currentHorizontalIntValue = value),
+              onChanged: (value) => setState(() {
+                _currentHorizontalIntValue = value;
+                ref.read(playersProvider.notifier).setNumberOfPlayers(value);
+              }),
             ),
             SizedBox(
               height: 40,

@@ -1,22 +1,37 @@
 import 'package:flutter/material.dart';
 
 class AppTextField extends StatelessWidget {
-  TextEditingController? controller;
+  final TextEditingController? controller;
+  final String hintText;
+  String? get _errorText {
+    // at any time, we can get the text from _controller.value.text
+    final text = controller!.value.text;
+    // Note: you can do your own custom validation here
+    // Move this logic this outside the widget for more testable code
+    if (text.isEmpty) {
+      return 'أكتب حاجة اديك عليها درجة';
+    }
+    if (text.length > 15) {
+      return 'مش هطلعلة بطاقة انا';
+    }
+    // return null if the text is valid
+    return null;
+  }
 
-  AppTextField({required this.controller});
+  const AppTextField({Key? key, required this.controller, this.hintText = ''});
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Container(
-        margin: EdgeInsets.all(5),
+        margin: const EdgeInsets.all(15),
         width: MediaQuery.of(context).size.width * 0.8,
         height: 60,
         decoration: BoxDecoration(
-          color: Color.fromARGB(164, 217, 149, 65),
+          color: const Color.fromARGB(164, 217, 149, 65),
           borderRadius: BorderRadius.circular(36),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.white10,
               blurRadius: 1,
@@ -25,15 +40,17 @@ class AppTextField extends StatelessWidget {
           ],
         ),
         child: TextField(
-          cursorColor: Color.fromRGBO(0, 0, 0, 0),
+          cursorColor: const Color.fromRGBO(0, 0, 0, 0),
           controller: controller,
           decoration: InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
             border: InputBorder.none,
             hintTextDirection: TextDirection.rtl,
-            hintText: 'إسم اللاعب 1',
+            hintText: hintText,
+            errorText: _errorText,
           ),
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 18,
           ),
         ),
