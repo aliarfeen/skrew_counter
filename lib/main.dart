@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skrew_counter/data/consts/constants.dart';
 import 'package:skrew_counter/ui/screens/splash_screen.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,7 +21,10 @@ class MyApp extends StatelessWidget {
       title: 'Screw Counter',
       theme: ThemeData(
         fontFamily: 'LBC',
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        primaryColor: AppColors.appSecColor,
+        colorScheme: const ColorScheme.light(
+          primary: AppColors.appSecColor,
+        ),
         useMaterial3: true,
       ),
       home: const SplashScreen(),

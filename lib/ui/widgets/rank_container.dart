@@ -33,7 +33,7 @@ class RankContainer extends StatelessWidget {
               children: [
                 AppText(
                   context: context,
-                  text: rank.toString(),
+                  text: "$rank",
                   color: AppColors.appSecColor,
                   fontsize: 20,
                 ),

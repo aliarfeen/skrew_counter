@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skrew_counter/data/consts/constants.dart';
 import 'package:skrew_counter/providers/players_provider.dart';
-import 'package:skrew_counter/ui/screens/set_players_number.dart';
 import 'package:skrew_counter/ui/screens/scoreboard_screen.dart';
 import 'package:skrew_counter/ui/widgets/app_text.dart';
 import 'package:skrew_counter/ui/widgets/app_text_area.dart';
@@ -22,6 +21,7 @@ class AddPlayers extends ConsumerStatefulWidget {
 class _AddPlayersState extends ConsumerState<AddPlayers> {
   late PlayersNotifier playersNotifier;
   late List<TextEditingController> _controllers;
+  late List<String?> _errorMessages;
 
   @override
   void initState() {
@@ -29,6 +29,38 @@ class _AddPlayersState extends ConsumerState<AddPlayers> {
 
     playersNotifier = ref.read(playersProvider.notifier);
     _controllers = List.generate(widget.number, (_) => TextEditingController());
+    _errorMessages = List.generate(widget.number, (_) => null);
+  }
+
+  void _validateAndSubmit() {
+    bool isValid = true;
+    for (int i = 0; i < _controllers.length; i++) {
+      if (_controllers[i].text.isEmpty) {
+        _errorMessages[i] = 'أكتب أي حاجة اديك عليها درجة';
+        isValid = false;
+      } else if (_controllers[i].text.length > 10) {
+        _errorMessages[i] = 'أخرك 10 حروف احنا مش في السجل المدني';
+        isValid = false;
+      } else {
+        _errorMessages[i] = null;
+      }
+    }
+
+    setState(() {});
+
+    if (isValid) {
+      List<String> data =
+          _controllers.map((controller) => controller.text).toList();
+      playersNotifier.addPlayer(data);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ScrewCounterScreen(
+            number: widget.number,
+          ),
+        ),
+      );
+    }
   }
 
   @override
@@ -61,10 +93,7 @@ class _AddPlayersState extends ConsumerState<AddPlayers> {
                 IconButton(
                     color: AppColors.appSecColor,
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PlayersNumber()));
+                      Navigator.pop(context);
                     },
                     icon: const Icon(
                       Icons.arrow_back_ios_rounded,
@@ -92,33 +121,37 @@ class _AddPlayersState extends ConsumerState<AddPlayers> {
             const SizedBox(
               height: 40,
             ),
-            Column(children: [
-              ..._controllers
-                  .map((controller) => AppTextField(
+            Column(
+              children: [
+                ..._controllers.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  TextEditingController controller = entry.value;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppTextField(
                         controller: controller,
-                        hintText:
-                            "اسم اللاعب ${_controllers.indexOf(controller) + 1}",
-                      ))
-                  .toList(),
-            ]),
+                        hintText: "اسم اللاعب ${index + 1}",
+                      ),
+                      if (_errorMessages[index] != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            _errorMessages[index]!,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                    ],
+                  );
+                }).toList(),
+              ],
+            ),
             const SizedBox(
               height: 40,
             ),
             MaterialButton(
               color: AppColors.appSecColor,
-              onPressed: () {
-                List<String> data =
-                    _controllers.map((controller) => controller.text).toList();
-                playersNotifier.addPlayer(data);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ScrewCounterScreen(
-                      number: widget.number,
-                    ),
-                  ),
-                );
-              },
+              onPressed: _validateAndSubmit,
               height: 60,
               minWidth: MediaQuery.of(context).size.width,
               shape: RoundedRectangleBorder(

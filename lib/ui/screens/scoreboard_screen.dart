@@ -2,13 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:skrew_counter/data/consts/constants.dart';
 import 'package:skrew_counter/providers/players_provider.dart';
+import 'package:skrew_counter/ui/screens/end_game_screen.dart';
 import 'package:skrew_counter/ui/screens/set_players_number.dart';
 import 'package:skrew_counter/ui/widgets/app_text.dart';
 import 'package:skrew_counter/ui/widgets/rank_container.dart';
 
 class ScrewCounterScreen extends ConsumerStatefulWidget {
   final int number;
-  ScrewCounterScreen({
+
+  const ScrewCounterScreen({
+    super.key,
     required this.number,
   });
 
@@ -17,17 +20,71 @@ class ScrewCounterScreen extends ConsumerStatefulWidget {
 }
 
 class _ScrewCounterScreenState extends ConsumerState<ScrewCounterScreen> {
+  late PlayersNotifier playersNotifier;
+  late List<TextEditingController> _scoreControllers;
+  late List<String?> _errorMessages;
+
   late List<Map<String, Object>> playerData;
   var scaffoldKey = GlobalKey<ScaffoldState>();
   int currentRound = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    playersNotifier = ref.read(playersProvider.notifier);
+    _scoreControllers =
+        List.generate(widget.number, (_) => TextEditingController());
+    _errorMessages = List.generate(widget.number, (_) => null);
+  }
+
+  void _addScores() {
+    bool isValid = true;
+    Map<int, int> playerScores = {};
+    for (int i = 0; i < playerData.length; i++) {
+      if (_scoreControllers[i].text.isEmpty) {
+        _errorMessages[i] = "جاب كام؟";
+        isValid = false;
+      } else if (!RegExp(r'^[0-9]+$').hasMatch(_scoreControllers[i].text)) {
+        _errorMessages[i] = 'ارقام فقط';
+        isValid = false;
+      } else {
+        _errorMessages[i] = null;
+        int playerId = playerData[i]['id'] as int;
+        int score = int.tryParse(_scoreControllers[i].text) ?? 0;
+        playerScores[playerId] = score;
+      }
+    }
+
+    setState(() {});
+
+    if (isValid) {
+      ref.read(playersProvider.notifier).updatePlayersScore(playerScores);
+      ref.read(playersProvider.notifier).updateRanks();
+
+      // Clear the text fields after updating the scores
+      _scoreControllers.forEach((element) {
+        element.text = "";
+      });
+
+      if (currentRound >= 5) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const EndGameScreen()),
+        );
+      } else {
+        currentRound++;
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     playerData = ref.watch(playersProvider).map((player) {
       return {
         'name': player.name,
-        'score': 0,
-        'rank': 0,
+        'score': player.score,
+        'rank': player.rank,
+        'id': player.id, // Add player id
       };
     }).toList();
     return Scaffold(
@@ -62,7 +119,7 @@ class _ScrewCounterScreenState extends ConsumerState<ScrewCounterScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => PlayersNumber(),
+                        builder: (context) => const PlayersNumber(),
                       ),
                     );
                   },
@@ -75,14 +132,9 @@ class _ScrewCounterScreenState extends ConsumerState<ScrewCounterScreen> {
                   'assets/images/logo.png',
                   height: 80,
                 ),
-                IconButton(
-                  color: AppColors.appSecColor,
-                  onPressed: () => {},
-                  icon: Icon(
-                    Icons.help,
-                    size: 30,
-                  ),
-                ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * .15,
+                )
               ],
             ),
             Container(
@@ -93,11 +145,19 @@ class _ScrewCounterScreenState extends ConsumerState<ScrewCounterScreen> {
                   return Column(
                     children: [
                       RankContainer(
-                        scoreController: TextEditingController(),
+                        scoreController: _scoreControllers[index],
                         playerName: playerData[index]['name'] as String,
                         rank: playerData[index]['rank'] as int,
                         score: playerData[index]['score'] as int,
                       ),
+                      if (_errorMessages[index] != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            _errorMessages[index]!,
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
                     ],
                   );
                 },
@@ -110,7 +170,7 @@ class _ScrewCounterScreenState extends ConsumerState<ScrewCounterScreen> {
               borderRadius: BorderRadius.circular(32),
               child: MaterialButton(
                 color: Color(0xffD99441),
-                onPressed: () => {},
+                onPressed: _addScores,
                 height: 60,
                 minWidth: MediaQuery.of(context).size.width,
                 shape: RoundedRectangleBorder(

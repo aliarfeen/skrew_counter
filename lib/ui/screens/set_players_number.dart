@@ -3,7 +3,7 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:flutter/material.dart';
 import 'package:skrew_counter/data/consts/constants.dart';
 import 'package:skrew_counter/providers/players_provider.dart';
-import 'package:skrew_counter/ui/screens/add_players_data.dart';
+import 'package:skrew_counter/ui/screens/add_players_name.dart';
 import 'package:skrew_counter/ui/widgets/app_main_button.dart';
 import 'package:skrew_counter/ui/widgets/app_text.dart';
 
@@ -71,8 +71,9 @@ class _PlayersNumberState extends ConsumerState<PlayersNumber> {
                   fontFamily: 'LBC', // font weight
                   color: const Color.fromARGB(130, 217, 149, 65)),
               onChanged: (value) => setState(() {
+                ref.watch(playersProvider.notifier).numberOfPlayers = value;
                 _currentHorizontalIntValue = value;
-                ref.read(playersProvider.notifier).setNumberOfPlayers(value);
+                // ref.read(playersProvider.notifier).setNumberOfPlayers(value);
               }),
             ),
             SizedBox(
