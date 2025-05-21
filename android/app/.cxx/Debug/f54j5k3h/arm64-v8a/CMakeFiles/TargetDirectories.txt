@@ -1,0 +1,2 @@
+C:/Users/arfee/Desktop/skrew_counter/android/app/.cxx/Debug/f54j5k3h/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/arfee/Desktop/skrew_counter/android/app/.cxx/Debug/f54j5k3h/arm64-v8a/CMakeFiles/rebuild_cache.dir

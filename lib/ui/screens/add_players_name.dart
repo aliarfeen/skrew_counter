@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:skrew_counter/data/consts/constants.dart';
+import 'package:skrew_counter/data/routing/routes.dart';
+import 'package:skrew_counter/data/routing/routing_helper.dart';
 import 'package:skrew_counter/providers/players_provider.dart';
-import 'package:skrew_counter/ui/screens/scoreboard_screen.dart';
 import 'package:skrew_counter/ui/widgets/app_text.dart';
 import 'package:skrew_counter/ui/widgets/app_text_area.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:skrew_counter/ui/widgets/scffold_with_bg.dart';
 
 class AddPlayers extends ConsumerStatefulWidget {
   final int number;
@@ -22,6 +24,7 @@ class _AddPlayersState extends ConsumerState<AddPlayers> {
   late PlayersNotifier playersNotifier;
   late List<TextEditingController> _controllers;
   late List<String?> _errorMessages;
+  late int playersNumber = ref.watch(playersProvider.notifier).numberOfPlayers;
 
   @override
   void initState() {
@@ -52,40 +55,21 @@ class _AddPlayersState extends ConsumerState<AddPlayers> {
       List<String> data =
           _controllers.map((controller) => controller.text).toList();
       playersNotifier.addPlayer(data);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ScrewCounterScreen(
-            number: widget.number,
-          ),
-        ),
+      context.pushNamed(
+        Routes.scoreboard,
+        arguments: ref.watch(playersProvider.notifier).numberOfPlayers,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width * 1,
-        padding: const EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              Color(0xFF2F2D3A),
-              Color(0xFF463259),
-              Color(0xFF592735),
-              Color(0xFF592735),
-              Color(0xFF463259),
-              Color(0xFF2F2D3A),
-            ],
-          ),
-        ),
+    return ScffoldWithBackground(
+      resizeToAvoidBottomInset: false,
+      child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -103,51 +87,51 @@ class _AddPlayersState extends ConsumerState<AddPlayers> {
                   'assets/images/logo.png',
                   height: 80,
                 ),
-                IconButton(
-                    color: AppColors.appSecColor,
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.help,
-                      size: 30,
-                    )),
+                const SizedBox(
+                  width: 40,
+                ),
               ],
-            ),
-            AppText(
-              context: context,
-              text: 'أدخل أسماء اللاعبين',
-              fontsize: 30,
-              color: AppColors.appSecColor,
-            ),
-            const SizedBox(
-              height: 40,
             ),
             Column(
               children: [
-                ..._controllers.asMap().entries.map((entry) {
-                  int index = entry.key;
-                  TextEditingController controller = entry.value;
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppTextField(
-                        controller: controller,
-                        hintText: "اسم اللاعب ${index + 1}",
-                      ),
-                      if (_errorMessages[index] != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 8.0),
-                          child: Text(
-                            _errorMessages[index]!,
-                            style: TextStyle(color: Colors.red),
+                AppText(
+                  context: context,
+                  text: 'أدخل أسماء اللاعبين',
+                  fontsize: 30,
+                  color: AppColors.appSecColor,
+                ),
+                SizedBox(
+                  height: playersNumber >= 4 ? 0 : 30,
+                ),
+                Column(
+                  children: [
+                    ..._controllers.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      TextEditingController controller = entry.value;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppTextField(
+                            controller: controller,
+                            hintText: "اسم اللاعب ${index + 1}",
                           ),
-                        ),
-                    ],
-                  );
-                }).toList(),
+                          if (_errorMessages[index] != null)
+                            Padding(
+                              padding: const EdgeInsets.only(top: 1.0),
+                              child: Text(
+                                _errorMessages[index]!,
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ),
+                        ],
+                      );
+                    }).toList(),
+                  ],
+                ),
               ],
             ),
-            const SizedBox(
-              height: 40,
+            SizedBox(
+              height: playersNumber >= 4 ? 80 : 180,
             ),
             MaterialButton(
               color: AppColors.appSecColor,

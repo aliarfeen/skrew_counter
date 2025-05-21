@@ -43,7 +43,7 @@ class RankContainer extends StatelessWidget {
                 Text(
                   playerName,
                   style: const TextStyle(
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'LBC',
                     color: AppColors.appSecColor,

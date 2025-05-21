@@ -2,7 +2,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:skrew_counter/data/models/player_model.dart';
 
 class PlayersNotifier extends StateNotifier<List<Player>> {
-  int numberOfPlayers = 0;
+  int numberOfPlayers = 4;
   PlayersNotifier() : super([]);
 
   void addPlayer(List<String> names) {

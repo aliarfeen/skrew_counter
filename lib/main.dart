@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skrew_counter/data/consts/constants.dart';
-import 'package:skrew_counter/ui/screens/splash_screen.dart';
+import 'package:skrew_counter/data/routing/app_router.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -11,9 +11,9 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AppRouter _appRouter = AppRouter();
+  MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -25,9 +25,9 @@ class MyApp extends StatelessWidget {
         colorScheme: const ColorScheme.light(
           primary: AppColors.appSecColor,
         ),
-        useMaterial3: true,
       ),
-      home: const SplashScreen(),
+      onGenerateRoute: _appRouter.onGenerateRoute,
+      initialRoute: '/onboarding',
     );
   }
 }
