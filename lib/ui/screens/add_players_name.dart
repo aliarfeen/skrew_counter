@@ -85,10 +85,10 @@ class _AddPlayersState extends ConsumerState<AddPlayers> {
               ],
             ),
           ),
-          child: Center(
-            child: SingleChildScrollView(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 80),
               child: Column(
-                mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
