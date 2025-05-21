@@ -64,92 +64,113 @@ class _AddPlayersState extends ConsumerState<AddPlayers> {
 
   @override
   Widget build(BuildContext context) {
-    return ScffoldWithBackground(
-      resizeToAvoidBottomInset: false,
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                    color: AppColors.appSecColor,
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back_ios_rounded,
-                      size: 30,
-                    )),
-                Image.asset(
-                  'assets/images/logo.png',
-                  height: 80,
-                ),
-                const SizedBox(
-                  width: 40,
-                ),
+    return Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: Container(
+          height: MediaQuery.of(context).size.height * 1,
+          width: MediaQuery.of(context).size.width * 1,
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              tileMode: TileMode.mirror,
+              colors: [
+                Color(0xFF2F2D3A),
+                Color(0xFF463259),
+                Color(0xFF592735),
+                Color(0xFF592735),
+                Color(0xFF463259),
+                Color(0xFF2F2D3A),
               ],
             ),
-            Column(
-              children: [
-                AppText(
-                  context: context,
-                  text: 'أدخل أسماء اللاعبين',
-                  fontsize: 30,
-                  color: AppColors.appSecColor,
-                ),
-                SizedBox(
-                  height: playersNumber >= 4 ? 0 : 30,
-                ),
-                Column(
-                  children: [
-                    ..._controllers.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      TextEditingController controller = entry.value;
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+          ),
+          child: Center(
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                          color: AppColors.appSecColor,
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(
+                            Icons.arrow_back_ios_rounded,
+                            size: 30,
+                          )),
+                      Image.asset(
+                        'assets/images/logo.png',
+                        height: 80,
+                      ),
+                      const SizedBox(
+                        width: 40,
+                      ),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      AppText(
+                        context: context,
+                        text: 'أدخل أسماء اللاعبين',
+                        fontsize: 30,
+                        color: AppColors.appSecColor,
+                      ),
+                      SizedBox(
+                        height: playersNumber >= 4 ? 0 : 30,
+                      ),
+                      Column(
                         children: [
-                          AppTextField(
-                            controller: controller,
-                            hintText: "اسم اللاعب ${index + 1}",
-                          ),
-                          if (_errorMessages[index] != null)
-                            Padding(
-                              padding: const EdgeInsets.only(top: 1.0),
-                              child: Text(
-                                _errorMessages[index]!,
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ),
+                          ..._controllers.asMap().entries.map((entry) {
+                            int index = entry.key;
+                            TextEditingController controller = entry.value;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppTextField(
+                                  controller: controller,
+                                  hintText: "اسم اللاعب ${index + 1}",
+                                ),
+                                if (_errorMessages[index] != null)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 1.0),
+                                    child: Text(
+                                      _errorMessages[index]!,
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          }).toList(),
                         ],
-                      );
-                    }).toList(),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(
-              height: playersNumber >= 4 ? 80 : 180,
-            ),
-            MaterialButton(
-              color: AppColors.appSecColor,
-              onPressed: _validateAndSubmit,
-              height: 60,
-              minWidth: MediaQuery.of(context).size.width,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(32)),
-              child: AppText(
-                context: context,
-                text: 'يلا بينا',
-                color: AppColors.appMainColor,
-                fontsize: 40,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: playersNumber >= 4 ? 80 : 180,
+                  ),
+                  MaterialButton(
+                    color: AppColors.appSecColor,
+                    onPressed: _validateAndSubmit,
+                    height: 60,
+                    minWidth: MediaQuery.of(context).size.width,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(32)),
+                    child: AppText(
+                      context: context,
+                      text: 'يلا بينا',
+                      color: AppColors.appMainColor,
+                      fontsize: 40,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }

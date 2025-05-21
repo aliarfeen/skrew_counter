@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:skrew_counter/data/consts/constants.dart';
 import 'package:skrew_counter/data/routing/routes.dart';
 import 'package:skrew_counter/data/routing/routing_helper.dart';
-import 'package:skrew_counter/ui/widgets/scffold_with_bg.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -17,7 +16,25 @@ class OnboardingScreen extends StatelessWidget {
         SystemNavigator.pop();
         return false; // Prevent back navigation
       },
-      child: ScffoldWithBackground(
+      child: Scaffold(
+          body: Container(
+        width: MediaQuery.of(context).size.width * 1,
+        padding: const EdgeInsets.all(16),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topRight,
+            end: Alignment.bottomLeft,
+            tileMode: TileMode.mirror,
+            colors: [
+              Color(0xFF2F2D3A),
+              Color(0xFF463259),
+              Color(0xFF592735),
+              Color(0xFF592735),
+              Color(0xFF463259),
+              Color(0xFF2F2D3A),
+            ],
+          ),
+        ),
         child: Center(
           child: Stack(children: [
             ClipRRect(
@@ -90,7 +107,7 @@ class OnboardingScreen extends StatelessWidget {
             ),
           ]),
         ),
-      ),
+      )),
     );
   }
 }
